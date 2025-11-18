@@ -1,16 +1,28 @@
 FROM ubuntu:24.04
 
 RUN apt update && \
-	apt upgrade -y && \
-	apt install -y git make g++ libgsl-dev && \
-	apt clean
+    apt upgrade -y && \
+    apt install -y \
+        git \
+        make \
+        g++ \
+        libgsl-dev \
+        libstdc++6 && \
+    apt clean
 
-WORKDIR /usr/src
+WORKDIR /tmp
 
 RUN git clone https://github.com/frederic-mahe/mumu.git && \
-	cd mumu && \
-	make && \
-	make check && \
-	make install
+    cd mumu && \
+    gcc --version && \
+    make && \
+    make check && \
+    make install
 
-ENV PATH="${PATH}:/usr/src/mumu"
+RUN rm -rf /tmp/mumu && \
+    apt purge -y git make g++ && \
+    apt autoremove -y && \
+    apt clean
+
+ENTRYPOINT ["mumu"]
+CMD []
